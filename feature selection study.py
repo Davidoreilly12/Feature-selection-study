@@ -79,37 +79,3 @@ X_GA=X[X.columns[bestfeatsind]]
 X_final=pd.concat(X_GA,X_reliefF,axis=0,ignore_index=True)
 
 
-#Final MLP classification model 
-X_train, X_test, Y_train, Y_test = train_test_split(X_final, Y, test_size = 0.5,stratify=Y,)
-
-
-mlp=MLP(hidden_layer_sizes=(100),activation='logistic',solver='adam',random_state=42,
-       verbose=True,validation_fraction=0.1, max_iter=200)
-mlp.fit(X_train,Y_train)
-preds=mlp.predict(X_test)
-acc = accuracy_score(preds, Y_test)
-for i in Y_test:
-    fpr, tpr,_= roc_curve(Y_test, preds)
-    roc_auc = auc(fpr, tpr)
-
-
-
-fig=plt.figure()
-lw = 2
-plt.plot(fpr, tpr, color='darkorange',
-         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.legend(loc="lower right")
-plt.show()
-
-report_with_auc = class_report(
-    y_true=Y_test, 
-    y_pred=preds)
-
-print("Report", report_with_auc)
-
-print("MLP accuracy", acc)
